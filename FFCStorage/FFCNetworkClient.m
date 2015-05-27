@@ -34,11 +34,11 @@ static FFCNetworkClient *_sharedClient = nil;
 {
     self = [super init];
     NSAssert(host!=nil, @"Initializing a Client without a hostname is not allowed.");
-    
+
     if (self == nil) {
         return nil;
     }
-    
+
     switch (scheme) {
         case FFCClientSchemeHTTPS:
             _scheme = @"https";
@@ -49,13 +49,13 @@ static FFCNetworkClient *_sharedClient = nil;
         default:
             break;
     }
-    
+
     _host = [host copy];
     _path = [path copy] ?: @"/";
     _port = [port copy] ?: @80;
-    
+
     _session = [NSURLSession sessionWithConfiguration:[NSURLSessionConfiguration defaultSessionConfiguration]];
-    
+
     return self;
 }
 
@@ -77,7 +77,7 @@ static FFCNetworkClient *_sharedClient = nil;
     components.scheme = self.scheme;
     components.host = self.host;
     components.path = [self.path stringByAppendingPathComponent:subpath];
-    components.port = self.port;
+    // components.port = self.port;
     return [components URL];
 }
 
@@ -85,17 +85,17 @@ static FFCNetworkClient *_sharedClient = nil;
 {
     NSURL *url = [self URLForRelativePath:subpath];
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];
-    
+
     NSMutableDictionary *headerFields = [@{@"Content-Type": @"application/json"} mutableCopy];
-    
+
     if (self.credentials != nil) {
         headerFields[@"client"] = self.credentials.client;
         headerFields[@"uid"] = self.credentials.uid;
         headerFields[@"access-token"] = self.credentials.token;
     }
-    
+
     request.allHTTPHeaderFields = headerFields;
-    
+
     return request;
 }
 
